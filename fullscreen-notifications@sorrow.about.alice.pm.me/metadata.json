@@ -2,6 +2,6 @@
   "name": "Fullscreen Notifications",
   "description": "Enables all notifications in fullscreen mode",
   "uuid": "fullscreen-notifications@sorrow.about.alice.pm.me",
-  "shell-version": ["3.30.2", "3.32", "3.34", "3.36"],
+  "shell-version": ["3.30.2", "3.32", "3.34", "3.36", "3.38"],
   "url": "https://github.com/soal/gnome-shell-extension-fullscreen-notifications"
 }
