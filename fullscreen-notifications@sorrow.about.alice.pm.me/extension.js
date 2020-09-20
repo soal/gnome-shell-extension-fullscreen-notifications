@@ -37,7 +37,7 @@ const Urgency = {
     HIGH: 2,
     CRITICAL: 3
 };
-// Adopted from original Gnome Shell code. Original version canbe found in gnome-shell/ui/messageTray.js
+// Adopted from Gnome Shell code. Original version can be found in gnome-shell/ui/messageTray.js:1207
 function updateState() {
         let hasMonitor = Main.layoutManager.primaryMonitor != null;
         this.visible = !this._bannerBlocked && hasMonitor && this._banner != null;
@@ -66,7 +66,9 @@ function updateState() {
         if (this._notificationState == State.HIDDEN) {
             let nextNotification = this._notificationQueue[0] || null;
             if (hasNotifications && nextNotification) {
-                let limited = this._busy || Main.layoutManager.primaryMonitor.inFullscreen;
+                // Removed fullscreen check
+                // let limited = this._busy || Main.layoutManager.primaryMonitor.inFullscreen;
+                let limited = this._busy;
                 let showNextNotification = !limited || nextNotification.forFeedback || nextNotification.urgency == Urgency.CRITICAL;
                 if (showNextNotification)
                     this._showNotification();
