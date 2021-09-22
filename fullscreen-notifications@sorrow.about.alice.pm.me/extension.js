@@ -37,7 +37,7 @@ const Urgency = {
     HIGH: 2,
     CRITICAL: 3,
 };
-// Adopted from original Gnome Shell code. Original version canbe found in gnome-shell/ui/messageTray.js
+// Adopted from original Gnome Shell code. Original version can be found in gnome-shell/ui/messageTray.js
 function updateState() {
     let hasMonitor = Main.layoutManager.primaryMonitor != null;
     this.visible = !this._bannerBlocked && hasMonitor && this._banner != null;
