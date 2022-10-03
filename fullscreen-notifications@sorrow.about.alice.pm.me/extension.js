@@ -39,65 +39,69 @@ const Urgency = {
 };
 // Adopted from original Gnome Shell code. Original version can be found in gnome-shell/ui/messageTray.js
 function updateState() {
-let hasMonitor = Main.layoutManager.primaryMonitor != null;
-        this.visible = !this._bannerBlocked && hasMonitor && this._banner != null;
-        if (this._bannerBlocked || !hasMonitor)
-            return;
+    let hasMonitor = Main.layoutManager.primaryMonitor != null;
+    this.visible = !this._bannerBlocked && hasMonitor && this._banner != null;
+    if (this._bannerBlocked || !hasMonitor) return;
 
-        // If our state changes caused _updateState to be called,
-        // just exit now to prevent reentrancy issues.
-        if (this._updatingState)
-            return;
+    // If our state changes caused _updateState to be called,
+    // just exit now to prevent reentrancy issues.
+    if (this._updatingState) return;
 
-        this._updatingState = true;
+    this._updatingState = true;
 
-        // Filter out acknowledged notifications.
-        let changed = false;
-        this._notificationQueue = this._notificationQueue.filter(n => {
-            changed ||= n.acknowledged;
-            return !n.acknowledged;
-        });
+    // Filter out acknowledged notifications.
+    let changed = false;
+    this._notificationQueue = this._notificationQueue.filter((n) => {
+        changed ||= n.acknowledged;
+        return !n.acknowledged;
+    });
 
-        if (changed)
-            this.emit('queue-changed');
+    if (changed) this.emit("queue-changed");
 
-        let hasNotifications = Main.sessionMode.hasNotifications;
+    let hasNotifications = Main.sessionMode.hasNotifications;
 
-        if (this._notificationState == State.HIDDEN) {
-            let nextNotification = this._notificationQueue[0] || null;
-            if (hasNotifications && nextNotification) {
-                // let limited = this._busy || Main.layoutManager.primaryMonitor.inFullscreen;
-                let limited = this._busy
-                let showNextNotification = !limited || nextNotification.forFeedback || nextNotification.urgency == Urgency.CRITICAL;
-                if (showNextNotification)
-                    this._showNotification();
-            }
-        } else if (this._notificationState === State.SHOWING ||
-                   this._notificationState === State.SHOWN) {
-            let expired = (this._userActiveWhileNotificationShown &&
-                           this._notificationTimeoutId == 0 &&
-                           this._notification.urgency != Urgency.CRITICAL &&
-                           !this._banner.focused &&
-                           !this._pointerInNotification) || this._notificationExpired;
-            let mustClose = this._notificationRemoved || !hasNotifications || expired;
-
-            if (mustClose) {
-                let animate = hasNotifications && !this._notificationRemoved;
-                this._hideNotification(animate);
-            } else if (this._notificationState === State.SHOWN &&
-                       this._pointerInNotification) {
-                if (!this._banner.expanded)
-                    this._expandBanner(false);
-                else
-                    this._ensureBannerFocused();
-            }
+    if (this._notificationState == State.HIDDEN) {
+        let nextNotification = this._notificationQueue[0] || null;
+        if (hasNotifications && nextNotification) {
+            // let limited = this._busy || Main.layoutManager.primaryMonitor.inFullscreen;
+            let limited = this._busy;
+            let showNextNotification =
+                !limited ||
+                nextNotification.forFeedback ||
+                nextNotification.urgency == Urgency.CRITICAL;
+            if (showNextNotification) this._showNotification();
         }
+    } else if (
+        this._notificationState === State.SHOWING ||
+        this._notificationState === State.SHOWN
+    ) {
+        let expired =
+            (this._userActiveWhileNotificationShown &&
+                this._notificationTimeoutId == 0 &&
+                this._notification.urgency != Urgency.CRITICAL &&
+                !this._banner.focused &&
+                !this._pointerInNotification) ||
+            this._notificationExpired;
+        let mustClose =
+            this._notificationRemoved || !hasNotifications || expired;
 
-        this._updatingState = false;
+        if (mustClose) {
+            let animate = hasNotifications && !this._notificationRemoved;
+            this._hideNotification(animate);
+        } else if (
+            this._notificationState === State.SHOWN &&
+            this._pointerInNotification
+        ) {
+            if (!this._banner.expanded) this._expandBanner(false);
+            else this._ensureBannerFocused();
+        }
+    }
 
-        // Clean transient variables that are used to communicate actions
-        // to updateState()
-        this._notificationExpired = false;
+    this._updatingState = false;
+
+    // Clean transient variables that are used to communicate actions
+    // to updateState()
+    this._notificationExpired = false;
 }
 
 function enable() {
