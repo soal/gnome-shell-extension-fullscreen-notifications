@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Taken from https://gjs.guide/extensions/development/preferences.html#gsettings-->
+<schemalist>
+    <schema id="me.pm.alice.about.sorrow.fullscreen-notifications" path="/me/pm/alice/about/sorrow/fullscreen-notifications/">
+        <!--See also: https://docs.gtk.org/glib/gvariant-format-strings.html-->
+        <key name="no-mouse" type="b">
+            <default>true</default>
+        </key>
+    </schema>
+</schemalist>

@@ -17,10 +17,12 @@
 */
 
 const Main = imports.ui.main;
+const ExtensionUtils = imports.misc.extensionUtils;
 const Lang = imports.lang;
 const GnomeSession = imports.misc.gnomeSession;
 
 let originalUpdateState = null;
+let settings = ExtensionUtils.getSettings('me.pm.alice.about.sorrow.fullscreen-notifications');
 
 function init() {}
 
@@ -95,6 +97,23 @@ function updateState() {
             if (!this._banner.expanded) this._expandBanner(false);
             else this._ensureBannerFocused();
         }
+    } else if (this._notificationState == State.SHOWN) {
+        // Check if notification was done whilst in fullscreen and if so dismiss the notification.
+        let expired =
+            ((this._userActiveWhileNotificationShown || (settings.get_boolean('no-mouse') && Main.layoutManager.primaryMonitor.inFullscreen)) &&
+                this._notificationTimeoutId == 0 &&
+                this._notification.urgency != Urgency.CRITICAL &&
+                !this._banner.focused &&
+                !this._pointerInNotification) ||
+            this._notificationExpired;
+        let mustClose =
+            this._notificationRemoved || !hasNotifications || expired;
+
+        this._updatingState = false;
+
+        // Clean transient variables that are used to communicate actions
+        // to updateState()
+        this._notificationExpired = false;
     }
 
     this._updatingState = false;
