@@ -16,13 +16,9 @@
   This program is a derived work of Gnome Shell.
 */
 
-const Main = imports.ui.main;
-const Lang = imports.lang;
-const GnomeSession = imports.misc.gnomeSession;
+import * as Main from "resource:///org/gnome/shell/ui/main.js";
 
 let originalUpdateState = null;
-
-function init() {}
 
 const State = {
     HIDDEN: 0,
@@ -37,7 +33,7 @@ const Urgency = {
     HIGH: 2,
     CRITICAL: 3,
 };
-// Adopted from original Gnome Shell code. Original version canbe found in gnome-shell/ui/messageTray.js
+// Adopted from original Gnome Shell code. Original version can be found in gnome-shell/ui/messageTray.js
 function updateState() {
     let hasMonitor = Main.layoutManager.primaryMonitor != null;
     this.visible = !this._bannerBlocked && hasMonitor && this._banner != null;
@@ -52,7 +48,7 @@ function updateState() {
     // Filter out acknowledged notifications.
     let changed = false;
     this._notificationQueue = this._notificationQueue.filter((n) => {
-        changed = changed || n.acknowledged;
+        changed ||= n.acknowledged;
         return !n.acknowledged;
     });
 
@@ -63,7 +59,6 @@ function updateState() {
     if (this._notificationState == State.HIDDEN) {
         let nextNotification = this._notificationQueue[0] || null;
         if (hasNotifications && nextNotification) {
-            // Removed fullscreen check
             // let limited = this._busy || Main.layoutManager.primaryMonitor.inFullscreen;
             let limited = this._busy;
             let showNextNotification =
@@ -72,7 +67,10 @@ function updateState() {
                 nextNotification.urgency == Urgency.CRITICAL;
             if (showNextNotification) this._showNotification();
         }
-    } else if (this._notificationState == State.SHOWN) {
+    } else if (
+        this._notificationState === State.SHOWING ||
+        this._notificationState === State.SHOWN
+    ) {
         let expired =
             (this._userActiveWhileNotificationShown &&
                 this._notificationTimeoutId == 0 &&
@@ -86,10 +84,12 @@ function updateState() {
         if (mustClose) {
             let animate = hasNotifications && !this._notificationRemoved;
             this._hideNotification(animate);
-        } else if (this._pointerInNotification && !this._banner.expanded) {
-            this._expandBanner(false);
-        } else if (this._pointerInNotification) {
-            this._ensureBannerFocused();
+        } else if (
+            this._notificationState === State.SHOWN &&
+            this._pointerInNotification
+        ) {
+            if (!this._banner.expanded) this._expandBanner(false);
+            else this._ensureBannerFocused();
         }
     }
 
@@ -100,11 +100,13 @@ function updateState() {
     this._notificationExpired = false;
 }
 
-function enable() {
-    originalUpdateState = Main.messageTray._updateState;
-    Main.messageTray._updateState = updateState.bind(Main.messageTray);
-}
+export default class FullscreenNotificationsExtenstion {
+    enable() {
+        originalUpdateState = Main.messageTray._updateState;
+        Main.messageTray._updateState = updateState.bind(Main.messageTray);
+    }
 
-function disable() {
-    Main.messageTray._updateState = originalUpdateState;
+    disable() {
+        Main.messageTray._updateState = originalUpdateState;
+    }
 }
