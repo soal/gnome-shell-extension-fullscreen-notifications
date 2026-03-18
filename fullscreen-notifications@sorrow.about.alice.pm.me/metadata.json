@@ -1,8 +1,8 @@
 {
-  "name": "Fullscreen Notifications",
-  "description": "Enables all notifications in fullscreen mode",
-  "uuid": "fullscreen-notifications@sorrow.about.alice.pm.me",
-  "shell-version": ["48", "49"],
-  "version": 13,
-  "url": "https://github.com/soal/gnome-shell-extension-fullscreen-notifications"
+	"name": "Fullscreen Notifications",
+	"description": "Enables all notifications in fullscreen mode",
+	"uuid": "fullscreen-notifications@sorrow.about.alice.pm.me",
+	"shell-version": ["48", "49", "50"],
+	"version": 14,
+	"url": "https://github.com/soal/gnome-shell-extension-fullscreen-notifications"
 }
